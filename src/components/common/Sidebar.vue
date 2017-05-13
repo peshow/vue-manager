@@ -9,6 +9,8 @@
           <i class="el-icon-setting"></i> 管理
         </template>
         <el-menu-item index="control">进程控制</el-menu-item>
+        <el-menu-item index="codechange">代码更新</el-menu-item>
+        <el-menu-item index="upload">上传更新</el-menu-item>
       </el-submenu>
       </el-menu-item>
     </el-menu>
@@ -17,9 +19,9 @@
 
 <script>
   export default {
-    methods: {
+    computed: {
       onActive () {
-        this.$router.path.replace('/', '')
+        return this.$route.path.replace('/', '')
       }
     }
   }

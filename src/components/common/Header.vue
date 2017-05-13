@@ -2,13 +2,13 @@
   <div class="header"> 
     <div class="logo">管理平台</div>
     <div class="imgInfo">
-      <el-dropdown>
+      <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           <img class="image" src="../../../static/dog.png">
-          <span class="user">{{ username }}</span>
+          <span class="user">{{ getUsername }}</span>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>退出登录</el-dropdown-item>
+          <el-dropdown-item command="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -17,8 +17,17 @@
 
 <script>
   export default {
-    data () {
-      return { username: 'pixiu' }
+    computed: {
+      getUsername () {
+        return this.$store.username
+      }
+    },
+    methods: {
+      handleCommand (command) {
+        if (command === 'logout') {
+          this.$router.push('/login')
+        }
+      }
     }
   }
 </script>

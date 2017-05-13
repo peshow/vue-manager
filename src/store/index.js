@@ -5,11 +5,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    count: 0
+    codeChangeLoading: false,
+    count: 0,
+    username: ''
   },
   mutations: {
-    increment (state) {
-      state.count++
+    setCodeLoad (state, payload) {
+      state.codeChangeLoading = payload.isOn
     }
   },
   getters: {
