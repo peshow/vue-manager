@@ -54,7 +54,7 @@
     computed: {
       getTable () {
         const self = this
-        self.$axios.get('http://172.16.20.215:9999/api/supervisor/get/')
+        self.$axios.get('http://172.16.20.215:9999/api/supervisor/')
         .then((rest) => {
           self.hostData = rest
         })
