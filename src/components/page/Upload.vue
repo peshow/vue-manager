@@ -102,7 +102,7 @@
         const self = this
         if (option) {
           self.multiSelection.map(row => {
-            self.$refs.multipleTable.toggleRowSelection()
+            self.$refs.multipleTable.toggleRowSelection(row)
           })
         } else {
           self.$refs.multipleTable.clearSelection()

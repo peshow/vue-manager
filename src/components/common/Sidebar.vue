@@ -16,7 +16,7 @@
         <template slot="title">
           <i class="el-icon-document"></i> 系统管理
         </template>
-        <el-menu-item index="admin">添加主机</el-menu-item>
+        <el-menu-item index="addremote">添加主机</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>
