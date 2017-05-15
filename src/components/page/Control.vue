@@ -132,6 +132,7 @@
               showClose: true
             })
           }
+          self.loadDataGet()
         })
       },
       scanAddSupervisor () {
