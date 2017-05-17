@@ -46,7 +46,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="toggle.label" width="240">
+      <el-table-column :label="toggle.label" width="320">
         <template scope="scope">
           <el-tag type="danger">{{ scope.row.project }}</el-tag>
         </template>
@@ -68,9 +68,9 @@
       </el-table-column>
       <el-table-column label="操作" width="220">
         <template scope="scope">
-          <el-button size="small" type="success" @click="handleAction(scope.$index, scope.row, 'start')">启动</el-button>
-          <el-button size="small" type="danger" @click="handleAction(scope.$index, scope.row, 'stop')">停止</el-button>
-          <el-button size="small" type="info" @click="handleAction(scope.$index, scope.row, 'restart')">重启</el-button>
+          <el-button size="small" :disabled="scope.row.buttonDisabled" type="success" @click="handleAction(scope.$index, scope.row, 'start')">启动</el-button>
+          <el-button size="small" :disabled="scope.row.buttonDisabled" type="danger" @click="handleAction(scope.$index, scope.row, 'stop')">停止</el-button>
+          <el-button size="small" :disabled="scope.row.buttonDisabled" type="info" @click="handleAction(scope.$index, scope.row, 'restart')">重启</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,7 +91,8 @@
           name: '空',
           describe: '',
           status: '',
-          type: ''
+          type: '',
+          buttonDisabled: false
         }],
         form: {
           host: '',
@@ -139,10 +140,17 @@
       },
       checkOk (rest) {
         rest.data.map(row => {
-          if (row.status === 'RUNNING') {
-            row.type = 'success'
-          } else {
-            row.type = 'warning'
+          switch (true) {
+            case row.project.startsWith('unix:///'):
+              row.buttonDisabled = true
+              break
+            case row.status === 'RUNNING':
+              row.buttonDisabled = false
+              row.type = 'success'
+              break
+            default:
+              row.buttonDisabled = false
+              row.type = 'warning'
           }
         })
         this.hostData = rest.data
