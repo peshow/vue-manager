@@ -69,6 +69,12 @@
           {{ scope.row.crontab }}
         </template>
       </el-table-column>
+      <el-table-column label="操作" width="140">
+        <template scope="scope">
+          <el-button size="small" :disabled="scope.row.on" type="success" @click="handleAction(scope.$index, scope.row, 'start')">启用</el-button> 
+          <el-button size="small" :disabled="scope.row.off" type="danger" @click="handleAction(scope.$index, scope.row, 'stop')">禁用</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -86,7 +92,9 @@
           cron_user: '',
           crontab: '',
           name: '空',
-          describe: ''
+          describe: '',
+          on: true,
+          off: true
         }],
         form: {
           id: '',
@@ -127,6 +135,32 @@
           }
         })
         this.hostData = rest.data
+      },
+      handleAction (index, row, action) {
+        const self = this
+        self.loading = true
+        self.$axios.post(`${self.$store.state.api}/api/supervisor/control/`,
+          JSON.stringify({
+            action: action,
+            host: row.host,
+            project: row.project
+          })
+        )
+        .then(function (rest) {
+          if (rest.data.rest === 0) {
+            self.$message({
+              message: '操作执行成功',
+              showClose: true
+            })
+            self.scanAddSupervisor()
+          } else {
+            self.$message({
+              message: '操作执行失败',
+              showClose: true
+            })
+          }
+          self.loadDataGet()
+        })
       },
       scanAddCrontab () {
         this.loading = true
