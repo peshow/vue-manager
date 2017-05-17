@@ -33,7 +33,7 @@
     methods: {
       handleCommand (command) {
         if (command === 'logout') {
-          this.$axios.delete(this.url + '?action=del')
+          this.$axios.delete(this.url)
           .then((rest) => {
             const data = rest.data.logout
             if (data === 1) {
@@ -46,7 +46,7 @@
         }
       },
       checkLogin () {
-        this.$axios.get(this.url + '?action=get')
+        this.$axios.get(this.url)
         .then(rest => {
           let data = rest.data.logined
           if (data === 0) {

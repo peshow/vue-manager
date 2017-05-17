@@ -8,12 +8,14 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import axios from 'axios'
 import qs from 'qs'
+import common from './util/common'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 Vue.prototype.$axios = axios
 Vue.prototype.$qs = qs
+Vue.prototype.common = common
 /* eslint-disable no-new */
 
 new Vue({

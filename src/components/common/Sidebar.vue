@@ -8,7 +8,8 @@
         <template slot="title">
           <i class="el-icon-setting"></i> 主机管理
         </template>
-        <el-menu-item index="control">进程控制</el-menu-item>
+        <el-menu-item index="supervisor">Supervisor管理</el-menu-item>
+        <el-menu-item index="crontab">任务计划</el-menu-item>
         <el-menu-item index="codechange">代码更新</el-menu-item>
         <el-menu-item index="upload">上传更新</el-menu-item>
       </el-submenu>

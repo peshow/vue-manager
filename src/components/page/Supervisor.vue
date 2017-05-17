@@ -6,7 +6,7 @@
           <i class='el-icon-date'></i>主机管理
         </el-breadcrumb-item>
         <el-breadcrumb-item>
-          进程控制
+          Supervisor管理
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -85,6 +85,7 @@
     data () {
       return {
         hostData: [{
+          id: '',
           host: '',
           project: '',
           name: '空',
@@ -98,9 +99,15 @@
           name: '',
           describe: ''
         },
+        url: this.$store.state.api + '/api/supervisor/',
         multiSelection: [],
         dialogFormVisible: false,
         editButtonDisabled: true,
+        formOldData: {
+          name: '',
+          describe: '',
+          on_or_off: 'on'
+        },
         loading: false,
         toggle: {
           button: '切换组管理',
@@ -111,29 +118,26 @@
     },
     methods: {
       loadDataGet () {
-        const self = this
-        const url = self.$store.state.api + '/api/supervisor/' + `?is_group=${self.toggle.status}`
-        self.$axios.get(url)
-        .then(function (rest) {
-          self.checkOk(rest)
+        const url = this.url + `?is_group=${this.toggle.status}`
+        this.$axios.get(url)
+        .then((rest) => {
+          this.checkOk(rest)
         })
       },
       switchTable () {
-        const self = this
-        if (self.toggle.status === 0) {
-          self.toggle.button = '切换进程管理'
-          self.toggle.label = '组名'
-          self.toggle.status = 1
-          self.loadDataGet()
+        if (this.toggle.status === 0) {
+          this.toggle.button = '切换进程管理'
+          this.toggle.label = '组名'
+          this.toggle.status = 1
+          this.loadDataGet()
         } else {
-          self.toggle.button = '切换组管理'
-          self.toggle.label = '进程名'
-          self.toggle.status = 0
-          self.loadDataGet()
+          this.toggle.button = '切换组管理'
+          this.toggle.label = '进程名'
+          this.toggle.status = 0
+          this.loadDataGet()
         }
       },
       checkOk (rest) {
-        const self = this
         rest.data.map(row => {
           if (row.status === 'RUNNING') {
             row.type = 'success'
@@ -141,60 +145,59 @@
             row.type = 'warning'
           }
         })
-        self.hostData = rest.data
+        this.hostData = rest.data
       },
       handleAction (index, row, action) {
-        const self = this
-        self.loading = true
-        self.$axios.post(`${self.$store.state.api}/api/supervisor/control/`,
+        this.loading = true
+        this.$axios.put(this.url + `{row.id}/action/`,
           JSON.stringify({
-            action: action,
-            host: row.host,
-            project: row.project
+            action: action
           })
         )
-        .then(function (rest) {
-          if (rest.data.rest === 0) {
-            self.$message({
-              message: '操作执行成功',
-              showClose: true
-            })
-            self.scanAddSupervisor()
-          } else {
-            self.$message({
-              message: '操作执行失败',
-              showClose: true
-            })
-          }
-          self.loadDataGet()
+        .then((rest) => {
+          this.common.actionMessage(rest, this)
+          this.loadDataGet()
         })
       },
       scanAddSupervisor () {
-        const self = this
-        self.loading = true
-        self.$axios.put(self.$store.state.api + '/api/supervisor/', JSON.stringify(
-          {'scan': 0, 'is_group': self.toggle.status})
+        this.loading = true
+        this.$axios.post(this.url, JSON.stringify(
+          {'is_group': this.toggle.status})
         )
-        .then(function (rest) {
-          self.checkOk(rest)
-          self.loading = false
+        .then((rest) => {
+          this.checkOk(rest)
+          this.loading = false
         })
       },
       editOpenVisible () {
         this.form = this.multiSelection[0]
         this.dialogFormVisible = true
+        this.formOldData = {
+          name: this.form.name,
+          describe: this.form.describe,
+          on_or_off: 'off'
+        }
       },
       cancelSet () {
-        this.dialogFormVisible = false
+        if (this.formOldData.on_or_off === 'off') {
+          console.log('cancelSet')
+          this.form.name = this.formOldData.name
+          this.form.describe = this.formOldData.describe
+          this.dialogFormVisible = false
+        }
       },
       confirmSet () {
+        console.log('confirmSet')
         this.dialogFormVisible = false
-        const self = this
-        const url = self.$store.state.api + '/api/supervisor/'
-        self.$axios.post(url,
-          JSON.stringify(self.form))
-        .then(function (rest) {
-          self.checkOk(rest)
+        this.formOldData.on_or_off = 'on'
+        const select = this.multiSelection[0]
+        this.$axios.put(this.url + select.id,
+          JSON.stringify({
+            name: this.form.name,
+            describe: this.form.describe
+          }))
+        .then((rest) => {
+          this.common.actionMessage(rest, this)
         })
       },
       handleSelectionChange (val) {

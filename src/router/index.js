@@ -22,8 +22,8 @@ export default new Router({
           component: resolve => require(['../components/page/Readme.vue'], resolve)
         },
         {
-          path: '/control',
-          component: resolve => require(['../components/page/Control.vue'], resolve)
+          path: '/supervisor',
+          component: resolve => require(['../components/page/Supervisor.vue'], resolve)
         },
         {
           path: '/codechange',
@@ -36,6 +36,10 @@ export default new Router({
         {
           path: '/addremote',
           component: resolve => require(['../components/page/AddRemote.vue'], resolve)
+        },
+        {
+          path: '/crontab',
+          component: resolve => require(['../components/page/Crontab.vue'], resolve)
         }
       ]
     }
