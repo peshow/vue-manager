@@ -7,10 +7,12 @@ import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import axios from 'axios'
+import qs from 'qs'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+Vue.prototype.$qs = qs
 /* eslint-disable no-new */
 
 new Vue({

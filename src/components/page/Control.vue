@@ -46,9 +46,18 @@
           ip: '172.16.20.119',
           process: 'wechat',
           message: '专门用于抓取微信内容',
-          status: 'Running',
-          HandleSelectionChange: []
-        }]
+          status: 'Running'
+        }],
+        HandleSelectionChange: []
+      }
+    },
+    computed: {
+      getTable () {
+        const self = this
+        self.$axios.get('http://172.16.20.215:9999/api/supervisor/get/')
+        .then((rest) => {
+          self.hostData = rest
+        })
       }
     },
     methods: {
@@ -57,11 +66,14 @@
       },
       scanAddSupervisor () {
         const self = this
+        self.$axios.get('http://172.16.20.215:9999/api/scanSupervisor/')
+        .then(function (rest) {
+          console.log(rest)
+        })
       }
     }
   }
 </script>
-
 <style scoped>
   .manage {
     left: 20px;
