@@ -2,7 +2,7 @@
   <div class="wrapper">
     <v-head></v-head>
     <v-side></v-side>
-    <div class="contain">
+    <div class="content">
         <router-view></router-view>
     </div>
   </div>
@@ -19,13 +19,15 @@
 </script>
 
 <style scoped>
-  .contain {
-    display: block;
+  .content {
     position: absolute;
     top: 70px;
     left: 250px;
-    padding: 20px;
+    right: 0;
+    padding: 40px;
     bottom: 0;
-    overflow-y: hidden;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    font-family: Helvetica Neue,Helvetica,microsoft yahei,arial,STHeiTi,sans-serif;
   }
 </style>

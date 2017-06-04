@@ -1,6 +1,17 @@
 <template>
-  <div class="code">
-    <el-form v-loading="loading" element-loading-text="拼命加载中" ref="form" :model="form" label-width="150px">
+  <div>
+    <div class="breadcrumb">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>
+          <i class='el-icon-date'></i>主机管理
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>
+          代码更新
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <div class="form-box">
+    <el-form v-loading="loading" element-loading-text="拼命加载中" ref="form" :model="form" label-width="60px">
       <el-form-item label="IP">
         <el-select v-model="form.ip" placeholder="请选择目标主机">
           <el-option label="172.16.20.117" value="10.6.19.38"></el-option>
@@ -14,6 +25,7 @@
         <el-button @click="onClean">清空内容</el-button>
       </el-form-item>
     </el-form>
+    </div>
   </div>
 </template>
 
@@ -69,8 +81,12 @@
 </script>
 
 <style scoped>
-  .code {
-    padding: 20px;
-    font-size: 14px;
+  .breadcrumb {
+    margin-bottom: 20px;
+  }
+  .form-box {
+    width: 600px;
+    position: relative;
+    left: 0;
   }
 </style>

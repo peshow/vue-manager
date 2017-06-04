@@ -39,8 +39,8 @@
     width: 100%;
     height: 70px;
     font-size: 22px;
-    z-index: 999;
     line-height: 70px;
+    z-index: 999;
     box-sizing: border-box;
   }
   .header .logo {

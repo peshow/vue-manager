@@ -6,13 +6,18 @@
       </el-menu-item>
       <el-submenu index="manage">
         <template slot="title">
-          <i class="el-icon-setting"></i> 管理
+          <i class="el-icon-setting"></i> 主机管理
         </template>
         <el-menu-item index="control">进程控制</el-menu-item>
         <el-menu-item index="codechange">代码更新</el-menu-item>
         <el-menu-item index="upload">上传更新</el-menu-item>
       </el-submenu>
-      </el-menu-item>
+      <el-submenu index="manage1">
+        <template slot="title">
+          <i class="el-icon-document"></i> 系统管理
+        </template>
+        <el-menu-item index="admin">添加主机</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>

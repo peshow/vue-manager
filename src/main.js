@@ -22,9 +22,3 @@ new Vue({
   template: '<App/>',
   render: h => h(App)
 })
-
-Vue.directive('loader', {
-  bind: function (el, binding) {
-    binding.args()
-  }
-})
