@@ -10,9 +10,11 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
       <br />
-        <el-button type="primary" @click="dialogFormVisible=true">添加</el-button>
+        <el-button type="primary" @click="addRemote">添加</el-button>
+        <el-button type="primary" @click="editRemote(multiSelection)">编辑</el-button>
+        <el-button type="primary" @click="delRemote">删除</el-button>
     </div>
-        <el-dialog title="新增远程主机" :visible.sync="dialogFormVisible">
+        <el-dialog title="新增远程主机" :visible.sync="dialogFormVisible" @close="cancelSet">
           <el-form :modle="form" label-width="80px">
             <el-form-item label="别名">
               <el-input v-model="form.name" placeholder="请设置远程主机别名" auto-complete="off" style="width: 400px"></el-input>
@@ -34,13 +36,16 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible=false">取消</el-button>
-            <el-button type="primary" @click="dialogFormVisible=false">确定</el-button>
+            <el-button @click="cancelSet">取消</el-button>
+            <el-button type="primary" @click="confirmSet">确定</el-button>
           </div>
         </el-dialog>
 
-    <el-table :data="tableData" ref="multipleTable" border style="width: 100%" @selection-change="multiSelection">
-      <el-table-column type="selection" width=55>
+    <el-table :data="tableData" ref="multipleTable" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="50">
+      </el-table-column>
+      <el-table-column label="ID" width="60">
+        <template scope="scope">{{ scope.row.id }}</template>
       </el-table-column>
       <el-table-column label="名称" width="100">
         <template scope="scope">
@@ -84,6 +89,7 @@
           default_path: '/tmp'
         },
         tableData: [{
+          id: '1',
           name: '新闻检测',
           ip: '192.168.2.22',
           host: 'mh-test444',
@@ -91,7 +97,8 @@
           port: '22',
           default_path: '/tmp'
         }],
-        multiSelection: []
+        multiSelection: [],
+        add_or_edit: 0       /* 0:add, 1:edit */
       }
     },
     computed: {
@@ -99,19 +106,62 @@
         this.$axios.get('/api/remote/get?ID=1')
           .then(function (res) {
             console.log(res)
-          })
+          }
+        )
       }
     },
     methods: {
+      cancelSet () {
+        this.form = {
+          name: '',
+          ip: '',
+          host: '',
+          user: 'root',
+          port: '22',
+          default_path: '/tmp'
+        }
+        this.dialogFormVisible = false
+      },
+      confirmSet () {
+        const self = this
+        self.dialogFormVisible = false
+        self.$axios.post(self.$store.api + '/api/admin/post',
+          JSON.stringify(self.form.status = self.add_or_edit))
+        .then(function (res) {
+          if (res.data.rest === 0) {
+            self.$message({
+              showClose: true,
+              message: res.data.message
+            })
+          }
+        })
+      },
+      handleSelectionChange (val) {
+        this.multiSelection = val
+      },
       toggleSelection (option) {
         const self = this
         if (option) {
-          self.multiSelection.map(row => {
-            self.$refs.multipleTable.toggleRowSelection()
+          self.tableData.map(row => {
+            self.$refs.multipleTable.toggleRowSelection(row)
           })
         } else {
           self.$refs.multipleTable.clearSelection()
         }
+      },
+      addRemote () {
+        this.add_or_edit = 0
+        this.dialogFormVisible = true
+      },
+      editRemote (tableElement) {
+        this.add_or_edit = 1
+        if (tableElement.length === 1) {
+          this.form = tableElement[0]
+          this.dialogFormVisible = true
+        }
+      },
+      delRemote () {
+        console.log(123)
       }
     }
   }

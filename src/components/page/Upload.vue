@@ -91,7 +91,7 @@
     },
     computed: {
       options () {
-        this.$axios.get('/api/remote/get?ID=1')
+        this.$axios.get(this.$store.api + '/api/remote/get?ID=1')
           .then(function (res) {
             console.log(res)
           })
@@ -101,7 +101,7 @@
       toggleSelection (option) {
         const self = this
         if (option) {
-          self.multiSelection.map(row => {
+          self.tableData.map(row => {
             self.$refs.multipleTable.toggleRowSelection(row)
           })
         } else {
