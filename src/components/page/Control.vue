@@ -12,24 +12,31 @@
     </div>
     <div class="manage">
       <el-button type="primary" @click="scanAddSupervisor">Ansible扫描</el-button>
-      <el-button type="primary" @click="">添加</el-button>
+      <el-button type="primary" @click="">编辑</el-button>
     </div>
     <el-table :data="hostData" border style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55">
       </el-table-column>
-      <el-table-column label="主机" width="180">
+      <el-table-column label="主机" width="150">
         <template scope="scope">
-          <span style="margin-left: 10px">{{ scope.row.ip }}</span>
+          <span style="margin-left: 10px">
+            <el-tag>{{ scope.row.host }}</el-tag>
+          </span>
         </template>
       </el-table-column>
-      <el-table-column label="进程名" width="180">
+      <el-table-column label="进程名" width="240">
         <template scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>描述: {{ scope.row.message }}</p>
             <div slot="reference" class="name-wrapper">
-              <el-tag>{{ scope.row.project }}</el-tag>
+              <el-tag type="danger">{{ scope.row.project }}</el-tag>
             </div>
           </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目名称" width="180">
+        <template scope="scope">
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" width="120">
@@ -56,8 +63,9 @@
     data () {
       return {
         hostData: [{
-          ip: '172.16.20.119',
+          host: '172.16.20.119',
           project: 'wechat',
+          name: '空',
           message: '专门用于抓取微信内容',
           status: 'Running'
         }],
@@ -93,9 +101,9 @@
       },
       scanAddSupervisor () {
         const self = this
-        self.$axios.get('http://192.168.230.131:9999/api/supervisor/')
+        console.log(self.$store.state.api + '/api/supervisor')
+        self.$axios.post(self.$store.state.api + '/api/supervisor/', JSON.stringify({'scan': 0}))
         .then(function (rest) {
-          console.log('who care you ', rest)
           self.hostData = rest.data
         })
       }
