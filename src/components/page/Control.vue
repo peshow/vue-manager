@@ -12,6 +12,7 @@
     </div>
     <div class="manage">
       <el-button type="primary" @click="scanAddSupervisor">Ansible扫描</el-button>
+      <el-button type="primary" @click="switchTable">{{ toggle.button }}</el-button>
       <el-button type="primary" @click="editOpenVisible" :disabled="editButtonDisabled">编辑</el-button>
     </div>
         <el-dialog title="编辑描述信息" :visible.sync="dialogFormVisible" @close="cancelSet">
@@ -19,14 +20,14 @@
             <el-form-item label="主机">
               <el-input v-model="form.host" :disabled="true" auto-complete="off" style="width: 400px"></el-input>
             </el-form-item>
-            <el-form-item label="进程名">
+            <el-form-item :label="toggle.label">
               <el-input v-model="form.project" :disabled="true" style="width: 400px"></el-input>
             </el-form-item>
             <el-form-item label="项目名称">
               <el-input v-model="form.name" placeholder="请设置项目名称" auto-complete="off" style="width: 400px"></el-input>
             </el-form-item>
             <el-form-item label="描述信息">
-              <el-input v-model="form.describe" placeholder="请输入描述信息" auto-complete="off" style="width: 400px"></el-input>
+              <el-input v-model="form.describe" placeholder="请输入描述信息" auto-complete="off" style="width: 400px" @keyup.enter.native="confirmSet"></el-input>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -35,7 +36,7 @@
           </div>
         </el-dialog>
 
-    <el-table :data="hostData" border style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table :data="hostData" border style="width: 100%" v-loading="loading" element-loading-text="拼命加载中"  @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55">
       </el-table-column>
       <el-table-column label="主机" width="150">
@@ -45,7 +46,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="进程名" width="240">
+      <el-table-column :label="toggle.label" width="240">
         <template scope="scope">
           <el-tag type="danger">{{ scope.row.project }}</el-tag>
         </template>
@@ -60,9 +61,9 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="120">
+      <el-table-column label="状态" v-if="toggle.status===0" width="120">
         <template scope="scope">
-          <el-tag type="success">{{ scope.row.status }}</el-tag>
+          <el-tag :type="scope.row.type">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="220">
@@ -84,11 +85,12 @@
     data () {
       return {
         hostData: [{
-          host: '172.16.20.119',
-          project: 'wechat',
+          host: '',
+          project: '',
           name: '空',
-          describe: '专门用于抓取微信内容',
-          status: 'Running'
+          describe: '',
+          status: '',
+          type: ''
         }],
         form: {
           host: '',
@@ -98,20 +100,52 @@
         },
         multiSelection: [],
         dialogFormVisible: false,
-        editButtonDisabled: true
+        editButtonDisabled: true,
+        loading: false,
+        toggle: {
+          button: '切换组管理',
+          label: '进程名',
+          status: 0
+        }
       }
     },
     methods: {
       loadDataGet () {
         const self = this
-        const url = self.$store.state.api + '/api/supervisor/'
+        const url = self.$store.state.api + '/api/supervisor/' + `?is_group=${self.toggle.status}`
         self.$axios.get(url)
         .then(function (rest) {
-          self.hostData = rest.data
+          self.checkOk(rest)
         })
+      },
+      switchTable () {
+        const self = this
+        if (self.toggle.status === 0) {
+          self.toggle.button = '切换进程管理'
+          self.toggle.label = '组名'
+          self.toggle.status = 1
+          self.loadDataGet()
+        } else {
+          self.toggle.button = '切换组管理'
+          self.toggle.label = '进程名'
+          self.toggle.status = 0
+          self.loadDataGet()
+        }
+      },
+      checkOk (rest) {
+        const self = this
+        rest.data.map(row => {
+          if (row.status === 'RUNNING') {
+            row.type = 'success'
+          } else {
+            row.type = 'warning'
+          }
+        })
+        self.hostData = rest.data
       },
       handleAction (index, row, action) {
         const self = this
+        self.loading = true
         self.$axios.post(`${self.$store.state.api}/api/supervisor/control/`,
           JSON.stringify({
             action: action,
@@ -125,7 +159,7 @@
               message: '操作执行成功',
               showClose: true
             })
-            self.loadDataGet()
+            self.scanAddSupervisor()
           } else {
             self.$message({
               message: '操作执行失败',
@@ -137,9 +171,13 @@
       },
       scanAddSupervisor () {
         const self = this
-        self.$axios.put(self.$store.state.api + '/api/supervisor/', JSON.stringify({'scan': 0}))
+        self.loading = true
+        self.$axios.put(self.$store.state.api + '/api/supervisor/', JSON.stringify(
+          {'scan': 0, 'is_group': self.toggle.status})
+        )
         .then(function (rest) {
-          self.hostData = rest.data
+          self.checkOk(rest)
+          self.loading = false
         })
       },
       editOpenVisible () {
@@ -156,7 +194,7 @@
         self.$axios.post(url,
           JSON.stringify(self.form))
         .then(function (rest) {
-          self.hostData = rest.data
+          self.checkOk(rest)
         })
       },
       handleSelectionChange (val) {

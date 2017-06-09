@@ -7,15 +7,14 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/readme'
+      redirect: '/login'
     },
     {
       path: '/login',
-      component: resolve => require(['../components/Login.vue'], resolve)
+      component: resolve => require(['../components/page/Login.vue'], resolve)
     },
     {
       path: '/readme',
-      name: 'Hello',
       component: resolve => require(['../components/common/Main.vue'], resolve),
       children: [
         {

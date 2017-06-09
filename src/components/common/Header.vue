@@ -17,16 +17,42 @@
 
 <script>
   export default {
+    beforeMount () {
+      this.checkLogin()
+    },
+    data () {
+      return {
+        url: this.$store.state.api + '/api/login/'
+      }
+    },
     computed: {
       getUsername () {
-        return this.$store.username
+        return localStorage.getItem('md_username')
       }
     },
     methods: {
       handleCommand (command) {
         if (command === 'logout') {
-          this.$router.push('/login')
+          this.$axios.delete(this.url + '?action=del')
+          .then((rest) => {
+            const data = rest.data.logout
+            if (data === 1) {
+              localStorage.removeItem('md_username')
+              this.$router.push('/login')
+            } else {
+              console.log('gaction is wrong')
+            }
+          })
         }
+      },
+      checkLogin () {
+        this.$axios.get(this.url + '?action=get')
+        .then(rest => {
+          let data = rest.data.logined
+          if (data === 0) {
+            this.$router.push('/login')
+          }
+        })
       }
     }
   }
