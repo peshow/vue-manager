@@ -11,6 +11,7 @@ import qs from 'qs'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+axios.defaults.withCredentials = true
 Vue.prototype.$axios = axios
 Vue.prototype.$qs = qs
 /* eslint-disable no-new */

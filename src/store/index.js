@@ -8,7 +8,7 @@ export default new Vuex.Store({
     codeChangeLoading: false,
     count: 0,
     username: '',
-    api: 'https://control.meihua.info'
+    api: 'http://control.meihua.info:9999'
   },
   mutations: {
     setCodeLoad (state, payload) {

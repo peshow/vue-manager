@@ -18,53 +18,67 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      form: {
-        username: '',
-        password: ''
-      },
-      rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
-      },
-      exists: false
-    }
-  },
-  methods: {
-    onSubmit (formName) {
-      const self = this
-      self.$refs[formName].validate((valid) => {
-        if (valid) {
-          self.$axios.post(self.$store.state.api + '/api/login/',
-            JSON.stringify({
-              username: self.form.username,
-              password: self.form.password
+  export default {
+    beforeMount () {
+      this.checkLogin()
+    },
+    data () {
+      return {
+        form: {
+          username: '',
+          password: ''
+        },
+        rules: {
+          username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' }
+          ]
+        },
+        exists: false
+      }
+    },
+    methods: {
+      onSubmit (formName) {
+        const self = this
+        self.$refs[formName].validate((valid) => {
+          if (valid) {
+            self.$axios.post(self.$store.state.api + '/api/login/',
+              JSON.stringify({
+                username: self.form.username,
+                password: self.form.password
+              })
+            )
+            .then(function (rest) {
+              let result = rest.data.login
+              if (result === 'success') {
+                self.$store.username = self.form.username
+                self.$router.push('/readme')
+                localStorage.setItem('md_username', self.form.username)
+              } else if (result === 'faile') {
+                self.exists = true
+              }
             })
-          )
-          .then(function (rest) {
-            let result = rest.data.login
-            if (result === 'success') {
-              self.$store.username = self.form.username
-              self.$router.push('/readme')
-              localStorage.setItem('md_username', self.form.username)
-            } else if (result === 'faile') {
-              self.exists = true
-            }
-          })
-        } else {
-          console.log('error submit!')
-          return false
-        }
-      })
+          } else {
+            console.log('error submit!')
+            return false
+          }
+        })
+      },
+      checkLogin () {
+        let url = this.$store.state.api + '/api/login/'
+        this.$axios.get(url + '?action=get')
+        .then(rest => {
+          let data = rest.data.logined
+          console.log(data)
+          if (data === 1) {
+            this.$router.push('/readme')
+          }
+        })
+      }
     }
   }
-}
 </script>
 
 <style scoped>
