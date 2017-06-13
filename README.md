@@ -4,12 +4,14 @@
   * （后端地址：https://github.com/peshow/vue-django）
 
 **功能实现：**
-* 登录状态检测方式：
-  * 使用JSON Web Token进行登录状态检测，及API允许访问的检测
-  * 后端API编写为 RESTful 规范的格式
+
+* 登录状态检测方式
+  - 使用JSON Web Token进行登录状态检测，及API允许访问的检测 
+  - 后端API编写为 RESTful 规范的格式
+
 * 暂时只完成了一个Supervisor的管理平台
-  * 通过Ansible扫描所有主机，将使用Supervisor的主机写入数据库并展示在前端界面
-  * 前端页面可通过进程控制或组控制，对各主机的Supervisor所管理的进程，进行统一的 启动/关闭/重启操作。
+  - 通过Ansible扫描所有主机，将使用Supervisor的主机写入数据库并展示在前端界面
+  - 前端页面可通过进程控制或组控制，对各主机的Supervisor所管理的进程，进行统一的 启动/关闭/重启操作。
 
 
 **前端页面**
