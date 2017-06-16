@@ -36,28 +36,27 @@
             { required: true, message: '请输入密码', trigger: 'blur' }
           ]
         },
-        exists: false
+        exists: false,
+        url: this.$store.state.api + '/api/login/'
       }
     },
     methods: {
       onSubmit (formName) {
-        const self = this
-        self.$refs[formName].validate((valid) => {
+        this.$refs[formName].validate((valid) => {
           if (valid) {
-            self.$axios.post(self.$store.state.api + '/api/login/',
+            this.$axios.post(this.url,
               JSON.stringify({
-                username: self.form.username,
-                password: self.form.password
+                username: this.form.username,
+                password: this.form.password
               })
             )
-            .then(function (rest) {
+            .then((rest) => {
               let result = rest.data.login
               if (result === 'success') {
-                self.$store.username = self.form.username
-                self.$router.push('/readme')
-                localStorage.setItem('md_username', self.form.username)
+                this.$router.push('/readme')
+                localStorage.setItem('md_username', this.form.username)
               } else if (result === 'faile') {
-                self.exists = true
+                this.exists = true
               }
             })
           } else {
@@ -67,9 +66,8 @@
         })
       },
       checkLogin () {
-        let url = this.$store.state.api + '/api/login/'
-        this.$axios.get(url + '?action=get')
-        .then(rest => {
+        this.$axios.get(this.url)
+        .then((rest) => {
           let data = rest.data.logined
           console.log(data)
           if (data === 1) {

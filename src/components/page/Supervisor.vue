@@ -53,12 +53,17 @@
       </el-table-column>
       <el-table-column label="项目名称" width="180">
         <template scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>描述: {{ scope.row.describe }}</p>
-            <div slot="reference" class="name-wrapper">
-              <span>{{ scope.row.name }}</span>
-            </div>
-          </el-popover>
+          <div v-if="scope.row.describe !== ''">
+            <el-popover trigger="hover" placement="top">
+              <p>描述: {{ scope.row.describe }}</p>
+              <div slot="reference" class="name-wrapper">
+                <span>{{ scope.row.name }}</span>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            <span>{{ scope.row.name }}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="状态" v-if="toggle.status===0" width="120">
@@ -119,10 +124,10 @@
     },
     methods: {
       loadDataGet () {
-        const url = this.url + `?is_group=${this.toggle.status}`
-        this.$axios.get(url)
+        this.$axios.get(this.url + `?is_group=${this.toggle.status}`)
         .then((rest) => {
           this.checkOk(rest)
+          this.loading = false
         })
       },
       switchTable () {
@@ -157,7 +162,7 @@
       },
       handleAction (index, row, action) {
         this.loading = true
-        this.$axios.put(this.url + `{row.id}/action/`,
+        this.$axios.patch(this.url + `${row.id}/action/`,
           JSON.stringify({
             action: action
           })
@@ -173,8 +178,8 @@
           {'is_group': this.toggle.status})
         )
         .then((rest) => {
-          this.checkOk(rest)
-          this.loading = false
+          this.common.actionMessage(rest, this)
+          this.loadDataGet()
         })
       },
       editOpenVisible () {
@@ -188,14 +193,12 @@
       },
       cancelSet () {
         if (this.formOldData.on_or_off === 'off') {
-          console.log('cancelSet')
           this.form.name = this.formOldData.name
           this.form.describe = this.formOldData.describe
           this.dialogFormVisible = false
         }
       },
       confirmSet () {
-        console.log('confirmSet')
         this.dialogFormVisible = false
         this.formOldData.on_or_off = 'on'
         const select = this.multiSelection[0]

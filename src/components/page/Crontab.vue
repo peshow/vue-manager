@@ -51,12 +51,17 @@
       </el-table-column>
       <el-table-column label="任务名称及描述" width="180">
         <template scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>描述: {{ scope.row.describe }}</p>
-            <div slot="reference" class="name-wrapper">
-              <span>{{ scope.row.name }}</span>
-            </div>
-          </el-popover>
+          <div v-if="scope.row.describe !== ''">
+            <el-popover trigger="hover" placement="top">
+              <p>描述: {{ scope.row.describe }}</p>
+              <div slot="reference" class="name-wrapper">
+                <span>{{ scope.row.name }}</span>
+              </div>
+            </el-popover>
+          </div>
+          <div v-else>
+            <span>{{ scope.row.name }}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="操作身份" width="100">
@@ -114,6 +119,7 @@
         this.$axios.get(this.url)
         .then((rest) => {
           this.checkOk(rest)
+          this.loading = false
         })
       },
       checkOk (rest) {
@@ -132,8 +138,8 @@
         this.loading = true
         this.$axios.post(this.url)
         .then((rest) => {
-          this.common.actionMessage(rest)
-          this.loading = false
+          this.common.actionMessage(rest, this)
+          this.loadDataGet()
         })
       },
       editOpenVisible () {
