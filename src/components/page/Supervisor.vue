@@ -79,6 +79,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="sizeChange"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageCount">
+       </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -109,6 +120,9 @@
         multiSelection: [],
         dialogFormVisible: false,
         editButtonDisabled: true,
+        currentPage: 1,
+        sizeChange: 10,
+        pageCount: 0,
         formOldData: {
           name: '',
           describe: '',
@@ -124,11 +138,9 @@
     },
     methods: {
       loadDataGet () {
-        this.$axios.get(this.url + `?is_group=${this.toggle.status}`)
-        .then((rest) => {
-          this.checkOk(rest)
-          this.loading = false
-        })
+        this.getPageCount()
+        this.handleCurrentChange(this.currentPage)
+        this.loading = false
       },
       switchTable () {
         if (this.toggle.status === 0) {
@@ -218,6 +230,24 @@
         } else {
           this.editButtonDisabled = true
         }
+      },
+      handleSizeChange (val) {
+        this.sizeChange = val
+        this.handleCurrentChange(this.currentPage)
+      },
+      handleCurrentChange (val) {
+        let url = this.url + `search/?q=filter&is_group=${this.toggle.status}&page=${val}&range=${this.sizeChange}`
+        this.$axios.get(url)
+        .then((rest) => {
+          this.checkOk(rest)
+          this.currentPage = val
+        })
+      },
+      getPageCount () {
+        this.$axios.get(this.url + `search/?q=count&is_group=${this.toggle.status}`)
+        .then((rest) => {
+          this.pageCount = rest.data.rest
+        })
       }
     }
   }

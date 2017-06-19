@@ -62,6 +62,7 @@
   .header {
     position: fixed;
     background-color: black;
+    background-image: url('../../../static/head_background.jpg');
     width: 100%;
     height: 70px;
     font-size: 22px;

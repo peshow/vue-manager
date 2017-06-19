@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="login-wrapper">
-      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+      <el-form ref="form" :rules="rules" :model="form" label-width="70px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
@@ -9,7 +9,7 @@
           <el-input v-model="form.password" type="password" placeholder="请输入密码" @keyup.enter.native="onSubmit('form')"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+          <el-button type="primary" style='width: 230px' @click="onSubmit('form')">登录</el-button>
         </el-form-item>
           <p class="error-message" v-if="exists">账户密码错误</p>
       </el-form>
@@ -85,6 +85,7 @@
     width: 100%;
     height: 100%;
     background-color: black;
+    background-image: url('../../../static/login_background.jpg');
   }
   .login .login-wrapper {
     position: relative;
@@ -93,7 +94,8 @@
     height: 160px;
     margin: 0 auto;
     padding: 40px;
-    background-color: #fff;
+    background-color: #f0f0f0;
+    background-image: url('../../../static/login_wrapper.png');
   }
   .login-wrapper .error-message {
     color: red;
